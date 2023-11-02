@@ -144,4 +144,5 @@ def game_menu():
         pygame.display.flip()
 
         clock.tick(30)
-
+# Calling the game menu function
+game_menu()
