@@ -6,7 +6,7 @@ import random
 # Initialize Pygame
 pygame.init()
 
-# Define some constants
+# def screen
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 BLACK = (0, 0, 0)
@@ -31,7 +31,7 @@ bullet_image = pygame.transform.scale(bullet_image, (20, 20))
 # Create a group for bullets
 shot_group = pygame.sprite.Group()
 
-# Define the Rocket class
+# Def the Rocket class
 class Rocket(pygame.sprite.Sprite):
     def __init__(self):  
         super().__init__()
@@ -53,7 +53,7 @@ class Rocket(pygame.sprite.Sprite):
             shot_group.add(bullet)
             self.last_shot_time = current_time  # Update last shot time
 
-# Define the Bullet class
+# Def the Bullet class
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):  
         super().__init__()
@@ -111,3 +111,37 @@ def loading_screen():
 
 # Call the loading screen function
 loading_screen()
+
+# Define a game menu function and its options
+def game_menu():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return  
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+
+
+        screen.blit(background, (0, 0))
+
+        text_surface = font.render("SPACE SHOOTER", True, WHITE)
+        text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4))
+        screen.blit(text_surface, text_rect)
+
+        new_game_text = font.render("Start (enter)", True, WHITE)
+        new_game_rect = new_game_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        screen.blit(new_game_text, new_game_rect)
+
+        quit_text = font.render("Quit (Q)", True, WHITE)
+        quit_rect = quit_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
+        screen.blit(quit_text, quit_rect)
+        
+        pygame.display.flip()
+
+        clock.tick(30)
+
