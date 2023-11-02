@@ -146,3 +146,54 @@ def game_menu():
         clock.tick(30)
 # Calling the game menu function
 game_menu()
+
+# Load alien images
+alien_image1 = pygame.image.load("C:\\Users\\user\\Desktop\\python\\12b93f80-c7c0-11ea-9335-0ad96c694158.png")
+alien_image1 = pygame.transform.scale(alien_image1, (50, 50))
+
+alien_image2 = pygame.image.load("C:\\Users\\user\\Desktop\\python\\16-161814_clipart-floating-silly-alien-with-tentacles-cartoon-alien.png")
+alien_image2 = pygame.transform.scale(alien_image2, (50, 50))
+
+# Def the Alien1 class
+class Alien1(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = alien_image1
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, SCREEN_WIDTH - self.rect.width)
+        self.rect.y = -self.rect.height 
+
+    def update(self):
+        self.rect.y += 3
+        if self.rect.y > SCREEN_HEIGHT:
+            self.rect.y = -self.rect.height
+            self.rect.x = random.randint(0, SCREEN_WIDTH - self.rect.width)
+
+# Def the Alien2 class
+class Alien2(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = alien_image2
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, SCREEN_WIDTH - self.rect.width)
+        self.rect.y = -self.rect.height 
+
+    def update(self):
+        self.rect.y += 2  # Different speed for type 2 alien
+        if self.rect.y > SCREEN_HEIGHT:
+            self.rect.y = -self.rect.height
+            self.rect.x = random.randint(0, SCREEN_WIDTH - self.rect.width)
+
+# Create groups for different types of aliens
+alien_group1 = pygame.sprite.Group()
+alien_group2 = pygame.sprite.Group()
+
+# Fun to add Alien1 to the group
+def add_alien1():
+    alien = Alien1()
+    alien_group1.add(alien)
+
+# Fun to add Alien2 to the group
+def add_alien2():
+    alien = Alien2()
+    alien_group2.add(alien)
