@@ -148,10 +148,10 @@ def game_menu():
 game_menu()
 
 # Load alien images
-alien_image1 = pygame.image.load("C:\\Users\\user\\Desktop\\python\\12b93f80-c7c0-11ea-9335-0ad96c694158.png")
+alien_image1 = pygame.image.load("C:\\Users\\user\\Desktop\\pygame\\assets\\12b93f80-c7c0-11ea-9335-0ad96c694158.png")
 alien_image1 = pygame.transform.scale(alien_image1, (50, 50))
 
-alien_image2 = pygame.image.load("C:\\Users\\user\\Desktop\\python\\16-161814_clipart-floating-silly-alien-with-tentacles-cartoon-alien.png")
+alien_image2 = pygame.image.load("C:\\Users\\user\\Desktop\\pygame\\assets\\16-161814_clipart-floating-silly-alien-with-tentacles-cartoon-alien.png")
 alien_image2 = pygame.transform.scale(alien_image2, (50, 50))
 
 # Def the Alien1 class
@@ -197,3 +197,144 @@ def add_alien1():
 def add_alien2():
     alien = Alien2()
     alien_group2.add(alien)
+    
+
+# Initialize frame count, rocket speed, and alien spawn timer
+frame_count = 0
+rocket_speed = 10
+alien_spawn_timer = 0
+alien_spawn_interval = 50
+rocket_alive = True
+
+# Game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # Check if the rocket is alive
+    if rocket_alive:
+        # keys pressed by the player
+        keys = pygame.key.get_pressed()
+        
+        # Updating the position of the rocket based on key input
+        if keys[pygame.K_LEFT] and rocket.rect.left > 0:  # Check if left key is pressed and rocket is within left boundary
+            rocket.rect.x -= rocket_speed
+        if keys[pygame.K_RIGHT] and rocket.rect.right < SCREEN_WIDTH:  # Check if right key is pressed and rocket is within right boundary
+            rocket.rect.x += rocket_speed
+
+        # Check if the player pressed the spacebar to shoot
+        if keys[pygame.K_SPACE]:
+            rocket.shoot()
+
+        # Update the position of bullets and check for collisions with aliens
+        for bullet in shot_group:
+            hit_list1 = pygame.sprite.spritecollide(bullet, alien_group1, True)
+            hit_list2 = pygame.sprite.spritecollide(bullet, alien_group2, True)
+
+            if hit_list1:
+                bullet.kill()
+                score += 1
+                score_text = font.render("Score: " + str(score), True, WHITE)
+            if hit_list2:
+                bullet.kill()
+                score += 1
+                score_text = font.render("Score: " + str(score), True, WHITE)
+
+        # Check for collisions between the rocket and aliens
+        if pygame.sprite.spritecollideany(rocket, alien_group1):
+            rocket_alive = False
+        if pygame.sprite.spritecollideany(rocket, alien_group2):
+            rocket_alive = False
+
+        # Clear the screen and draw background
+        screen.blit(background, (0, 0))
+        
+        # Draw the rocket
+        screen.blit(rocket.image, rocket.rect)
+
+        # Updating and drawing Alien1 group
+        alien_group1.update()
+        alien_group1.draw(screen)
+
+        # Updating and drawing Alien2 group
+        alien_group2.update()
+        alien_group2.draw(screen)
+
+        # Updating and drawing Bullet group
+        shot_group.update()
+        for bullet in shot_group:
+            if bullet.rect.bottom < 0:
+                bullet.kill()
+        shot_group.draw(screen)
+
+        # alien spawn timer
+        alien_spawn_timer += 0.5
+
+        # If enough time has passed, add new aliens
+        if alien_spawn_timer >= alien_spawn_interval:
+            add_alien1()
+            add_alien2()  # Adding both types of aliens
+            alien_spawn_timer = 0
+
+        # Draw the score text
+        screen.blit(score_text, score_rect)  
+
+        # Increment frame count
+        frame_count += 1
+
+        # Updating the display
+        pygame.display.flip()
+
+        # Control the frame rate
+        clock.tick(30)
+        
+    
+    else:
+        # If rocket is not alive, show game over screen
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        # Clear the screen and draw background
+        screen.blit(background, (0, 0))
+
+        # Display game over message
+        text_surface = font.render("Game Over", True, WHITE)
+        text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4))
+        screen.blit(text_surface, text_rect)
+
+        # Display restart and quit options
+        restart_text = font.render("Restart (enter)", True, WHITE)
+        restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        screen.blit(restart_text, restart_rect)
+
+        quit_text = font.render("Quit (Q)", True, WHITE)
+        quit_rect = quit_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
+        screen.blit(quit_text, quit_rect)
+
+        # Update the display
+        pygame.display.flip()
+
+        # Control the frame rate
+        clock.tick(30)
+
+        # Check for user input to restart or quit
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    # If Enter is pressed, restart the game
+                    rocket_alive = True
+                    score = 0
+                    score_text = font.render("Score: " + str(score), True, WHITE)
+                    rocket.rect.centerx = SCREEN_WIDTH // 2
+                    rocket.rect.bottom = SCREEN_HEIGHT - 10
+                    alien_group1.empty()
+                    alien_group2.empty()
+                    shot_group.empty()
+                elif event.key == pygame.K_q:
+                    # If Q is pressed, quit the game
+                    pygame.quit()
+                    sys.exit()
